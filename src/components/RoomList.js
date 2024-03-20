@@ -1,29 +1,34 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 
-function RoomList({ hotelId }) {
-  const [rooms, setRooms] = useState([]);
+const BookRoom = ({ hotelId, userId }) => {
+  const [checkInDate, setCheckInDate] = useState('');
+  const [checkOutDate, setCheckOutDate] = useState('');
+  const [guests, setGuests] = useState('');
 
-  useEffect(() => {
-    axios.get(`/api/hotels/${hotelId}/rooms`)
-      .then(response => {
-        setRooms(response.data);
-      })
-      .catch(error => {
-        console.error('Error fetching rooms:', error);
+  const bookRoom = async () => {
+    try {
+      await axios.post('/api/bookings', {
+        user_id: userId,
+        hotel_id: hotelId,
+        check_in_date: checkInDate,
+        check_out_date: checkOutDate,
+        guests: guests
       });
-  }, [hotelId]);
+      // Handle success
+    } catch (error) {
+      console.error('Error booking room:', error);
+    }
+  };
 
   return (
     <div>
-      <h2>Rooms</h2>
-      <ul>
-        {rooms.map(room => (
-          <li key={room.id}>{room.room_type}</li>
-        ))}
-      </ul>
+      <input type="date" value={checkInDate} onChange={(e) => setCheckInDate(e.target.value)} />
+      <input type="date" value={checkOutDate} onChange={(e) => setCheckOutDate(e.target.value)} />
+      <input type="number" value={guests} onChange={(e) => setGuests(e.target.value)} />
+      <button onClick={bookRoom}>Book</button>
     </div>
   );
-}
+};
 
-export default RoomList;
+export default BookRoom;

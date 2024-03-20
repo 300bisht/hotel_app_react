@@ -1,41 +1,55 @@
 import React, { useState } from 'react';
-import './App.css';
-import SearchBar from './components/SearchBar';
-import HotelList from './components/HotelList';
-import BookingForm from './components/BookingForm';
-import RoomList from './components/RoomList';
+import axios from 'axios';
+import SearchLocation from './components/SearchLocation';
+import BookRoom from './components/BookRoom';
+import EditBooking from './components/EditBooking';
+import ListingBooking from './components/ListingBooking';
 
-//import EditBookingForm from './components/EditBookingForm';
+const App = () => {
+  const [location, setLocation] = useState('');
+  const [hotelId, setHotelId] = useState('');
+  const [userId, setUserId] = useState('');
 
-function App() {
-  const [selectedRoom, setSelectedRoom] = useState(null);
-  const [editMode, setEditMode] = useState(false);
-  const [selectedHotel, setSelectedHotel] = useState(null); 
-  
-
-  const handleHotelSelect = (hotel) => {
-    debugger;
-    setSelectedHotel(hotel); // Set the selected hotel
+  const handleLocationChange = async (selectedLocation) => {
+    setLocation(selectedLocation);
+    setHotelId(''); // Reset hotel selection when location changes
   };
 
+  const handleHotelChange = (selectedHotelId) => {
+    setHotelId(selectedHotelId);
+  };
 
+  const handleUserChange = (selectedUserId) => {
+    setUserId(selectedUserId);
+  };
 
   return (
-    <div className="App">
+    <div>
       <h1>Hotel Booking App</h1>
-      <SearchBar />
-
-      <div className="content">
-        <div className="hotel-list">
-          <h2>Hotels</h2>
-          <HotelList onHotelSelect={handleHotelSelect} />
-        </div>
-        <div className="booking-section">
-          {selectedHotel && <RoomList hotel={selectedHotel} />}
-        </div>
+      <div>
+        <h2>Search Location</h2>
+        <SearchLocation setLocation={handleLocationChange} />
       </div>
+      {location && (
+        <div>
+          <h2>Book Room</h2>
+          <BookRoom hotelId={hotelId} userId={userId} />
+        </div>
+      )}
+      {userId && (
+        <div>
+          <h2>Edit Booking</h2>
+          <EditBooking userId={userId} />
+        </div>
+      )}
+      {userId && (
+        <div>
+          <h2>Listing Booking</h2>
+          <ListingBooking userId={userId} />
+        </div>
+      )}
     </div>
   );
-}
+};
 
 export default App;
