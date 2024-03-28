@@ -1,54 +1,24 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import SearchLocation from './components/SearchLocation';
-import BookRoom from './components/BookRoom';
-import EditBooking from './components/EditBooking';
-import ListingBooking from './components/ListingBooking';
-
+// import BookRoom from './components/BookRoom';
+// import EditBooking from './components/EditBooking';
+// import ListingBooking from './components/ListingBooking';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
+import BookingForm from './components/BookingForm';
+import UserBooking from './components/UserBookings';
+import EditUserBooking from './components/EditBookingForm';
+import HotelList from './components/HotelList';
 const App = () => {
-  const [location, setLocation] = useState('');
-  const [hotelId, setHotelId] = useState('');
-  const [userId, setUserId] = useState('');
-
-  const handleLocationChange = async (selectedLocation) => {
-    setLocation(selectedLocation);
-    setHotelId(''); // Reset hotel selection when location changes
-  };
-
-  const handleHotelChange = (selectedHotelId) => {
-    setHotelId(selectedHotelId);
-  };
-
-  const handleUserChange = (selectedUserId) => {
-    setUserId(selectedUserId);
-  };
 
   return (
-    <div>
-      <h1>Hotel Booking App</h1>
-      <div>
-        <h2>Search Location</h2>
-        <SearchLocation setLocation={handleLocationChange} />
-      </div>
-      {location && (
-        <div>
-          <h2>Book Room</h2>
-          <BookRoom hotelId={hotelId} userId={userId} />
-        </div>
-      )}
-      {userId && (
-        <div>
-          <h2>Edit Booking</h2>
-          <EditBooking userId={userId} />
-        </div>
-      )}
-      {userId && (
-        <div>
-          <h2>Listing Booking</h2>
-          <ListingBooking userId={userId} />
-        </div>
-      )}
-    </div>
+      <Router>
+        <Routes>
+          <Route path="/" element={<HotelList/>}/>
+          <Route path="/BookingForm" element={<BookingForm/>}/>
+          <Route path="/UserBookings" element={<UserBooking/>}/>
+          <Route path="/bookings/:bookingId/edit" element={<EditUserBooking/>} />
+        </Routes>
+      </Router>
   );
 };
 

@@ -1,32 +1,71 @@
-import React, { useState } from 'react';
 import axios from 'axios';
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 
-const EditBooking = ({ bookingId, userId }) => {
-  const [checkInDate, setCheckInDate] = useState('');
-  const [checkOutDate, setCheckOutDate] = useState('');
-  const [guests, setGuests] = useState('');
+const EditBookingForm = ({ }) => {
+  const { bookingId } = useParams();
 
-  const updateBooking = async () => {
+  const [formData, setFormData] = useState({
+    check_in_date: '',
+    check_out_date: ''
+  });
+
+
+  useEffect(() => {
+    fetchBooking();
+  }, [bookingId]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
+  };
+
+
+  const fetchBooking = async () => {
     try {
-      await axios.put(`/api/bookings/${bookingId}`, {
-        check_in_date: checkInDate,
-        check_out_date: checkOutDate,
-        guests: guests
+      const response = await axios.get(`http://localhost:4000/bookings/${bookingId}/edit`);
+      const bookingData = response.data;
+      setFormData({
+        check_in_date: bookingData.check_in_date,
+        check_out_date: bookingData.check_out_date
       });
-      // Handle success
+    } catch (error) {
+      console.error('Error fetching booking:', error);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    debugger;
+    try {
+      await axios.put(`http://localhost:4000/bookings/${bookingId}`, {booking: formData});
+      alert('Booking updated successfully');
     } catch (error) {
       console.error('Error updating booking:', error);
     }
   };
 
+
   return (
-    <div>
-      <input type="date" value={checkInDate} onChange={(e) => setCheckInDate(e.target.value)} />
-      <input type="date" value={checkOutDate} onChange={(e) => setCheckOutDate(e.target.value)} />
-      <input type="number" value={guests} onChange={(e) => setGuests(e.target.value)} />
-      <button onClick={updateBooking}>Update</button>
+
+    <div className="booking-form">
+      <h2>Edit Booking</h2>
+      <form onSubmit={handleSubmit}>
+        <div className="mb-3">
+          <label htmlFor="check_in_date" className="form-label">Check-in Date</label>
+          <input type="date" className="form-control" id="check_in_date" name="check_in_date" value={formData.check_in_date} onChange={handleChange} required />
+        </div>
+        <div className="mb-3">
+          <label htmlFor="check_out_date" className="form-label">Check-out Date</label>
+          <input type="date" className="form-control" id="check_out_date" name="check_out_date" value={formData.check_out_date} onChange={handleChange} required />
+        </div>
+        <button type="submit" className="btn btn-primary">Update Booking</button>
+      </form>
     </div>
   );
 };
 
-export default EditBooking;
+export default EditBookingForm;

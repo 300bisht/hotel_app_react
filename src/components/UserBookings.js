@@ -1,12 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Outlet,
+  Link
+} from "react-router-dom";
 const ListingBooking = ({ userId }) => {
   const [bookings, setBookings] = useState([]);
 
   useEffect(() => {
+      debugger;
     const fetchBookings = async () => {
-      const response = await axios.get(`/api/bookings?user_id=${userId}`);
+      const response = await axios.get('http://localhost:4000/bookings?user_id=1');
       setBookings(response.data);
     };
 
@@ -15,13 +21,24 @@ const ListingBooking = ({ userId }) => {
 
   return (
     <div>
-      {bookings.map((booking) => (
-        <div key={booking.id}>
-          <p>Check-in: {booking.check_in_date}</p>
-          <p>Check-out: {booking.check_out_date}</p>
-          <p>Guests: {booking.guests}</p>
-        </div>
-      ))}
+      <h2>All Bookings</h2>
+      <table className="table">
+        <thead>
+          <tr>
+            <th>Check-in Date</th>
+            <th>Check-out Date</th>
+          </tr>
+        </thead>
+        <tbody>
+        {bookings.map((booking) => (
+          <tr key={booking.id}>
+            <td>{booking.check_in_date}</td>
+            <td>{booking.check_out_date}</td>
+            <Link to={`/bookings/${booking.id}/edit`}>Edit</Link>
+          </tr>  
+        ))}
+        </tbody>
+        </table>
     </div>
   );
 };
